@@ -77,7 +77,6 @@ module counter_fsm(
         dind_next   = din_i;
         if(v_i) begin 
           N1_data_next        = din_i;
-          sawtooth_cntr_next  = din_i; 
           next                = N2_SELECT;
         end
       end 
@@ -91,6 +90,7 @@ module counter_fsm(
       end
       CALC: begin
         debug_next  = 2'd3;
+        dind_next   = sawtooth_cntr_current;
         if(v_i)
           next = N1_SELECT;
         else begin
