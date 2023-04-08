@@ -6,18 +6,19 @@ module clk_div(
 );
 
   //4 Hz -> 0.25s -> 250_000_000ns
+  //250_000_000ns / 40ns = 6_250_000
 
-  reg [27:0]  clk_cnt;
+  reg [22:0]  clk_cnt;
 
   always @ (posedge clk_i, negedge rst_i) begin
     if(!rst_i)
       clk_cnt <= 28'h0;
-    else if(clk_cnt == 28'd250_000_001)
+    else if(clk_cnt == 23'd6_250_001)
       clk_cnt <= 28'h0;
     else 
       clk_cnt <= clk_cnt + 1'b1;
   end
 
-  assign clc_o = (clk_cnt == 28'd250_000_000) ? 1'b1 : 1'b0;
+  assign clc_o = (clk_cnt == 23'd6_250_000) ? 1'b1 : 1'b0;
 
 endmodule 

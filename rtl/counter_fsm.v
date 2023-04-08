@@ -9,8 +9,7 @@ module counter_fsm(
   output  [7:0]   N1_out,             //output of N1 data
   output  [7:0]   N2_out,             //output of N2 data
   output  [7:0]   sawtooth_cntr_out,  //sawtooth counter output
-  output  [1:0]   debug_out,          //output current state data (7 dight display)
-
+  output  [1:0]   debug_out          //output current state data (7 dight display)
 
 );
 
@@ -58,16 +57,19 @@ module counter_fsm(
       debug_current         <=  debug_next;
       dind_current          <=  dind_next;
       sawtooth_cntr_current <=  sawtooth_cntr_next;
+      direction_current     <=  direction_next;
     end
   end 
 
   always @ * begin
-    next          = current;
+    next          = state;
     N1_data_next  = N1_data_current;
     N2_data_next  = N2_data_current;
     debug_next    = debug_current;
     dind_next     = dind_current;
-    case(current)
+    sawtooth_cntr_next = sawtooth_cntr_current;
+    direction_next = direction_current;
+    case(state)
       IDLE: begin
         if(v_i)
           next = N1_SELECT;
@@ -90,18 +92,20 @@ module counter_fsm(
       end
       CALC: begin
         debug_next  = 2'd3;
-        dind_next   = sawtooth_cntr_current;
-        if(v_i)
+        dind_next   = sawtooth_cntr_current + N1_data_current;
+        if(v_i) begin 
           next = N1_SELECT;
+          sawtooth_cntr_next = 8'd0;
+        end
         else begin
-          if(!direction_next) begin
+          if(!direction_current) begin
             sawtooth_cntr_next = sawtooth_cntr_current + 1'b1; 
-            if(sawtooth_cntr_next == N2_data_current)
+            if(sawtooth_cntr_next == (N2_data_current - N1_data_current))
               direction_next = 1'b1;
           end
           else begin
             sawtooth_cntr_next = sawtooth_cntr_current - 1'b1;
-            if(sawtooth_cntr_next == N1_data_current)
+            if(sawtooth_cntr_next == 0)
               direction_next = 1'b0;
           end
         end

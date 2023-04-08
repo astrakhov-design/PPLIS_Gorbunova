@@ -4,7 +4,7 @@ module sawtooth_counter_top(
   input         v_i,      // Select input button
   input   [7:0] din_i,    // Input data for N1, N2
 
-  output  [20:0] Q_o,     // Output of counter LEDs
+  output  [19:0] Q_o,     // Output of counter LEDs
 
   //Segment indicator output wires
   output [6:0]  sseg0,  //indicator [3:0]

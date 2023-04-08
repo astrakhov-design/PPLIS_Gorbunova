@@ -1,0 +1,5 @@
+../rtl/clk_div.v 
+../rtl/counter_fsm.v
+../rtl/sseg_dec.v
+../rtl/sawtooth_counter_top.v
+../tb/tb_top.sv
