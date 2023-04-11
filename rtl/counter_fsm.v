@@ -3,24 +3,26 @@ module counter_fsm(
   input           rst_i,              //reset button
 
   input           v_i,                //input select button
+  input           ST_i,               //START counting button
   input   [7:0]   din_i,              //input data select switch
 
   output  [7:0]   dind_out,           //output indication data (7 dight display)
   output  [7:0]   N1_out,             //output of N1 data
   output  [7:0]   N2_out,             //output of N2 data
   output  [7:0]   sawtooth_cntr_out,  //sawtooth counter output
-  output  [1:0]   debug_out          //output current state data (7 dight display)
+  output  [2:0]   debug_out          //output current state data (7 dight display)
 
 );
 
   //FSM state description
-  localparam [1:0]  IDLE      = 2'd0,
-                    N1_SELECT = 2'd1,
-                    N2_SELECT = 2'd2,
-                    CALC      = 2'd3;
+  localparam [2:0]  IDLE      = 3'd0,
+                    N1_SELECT = 3'd1,
+                    N2_SELECT = 3'd2,
+                    CALC_WAIT = 3'd3,
+                    CALC      = 3'd4;
               
-  reg [1:0]   state;
-  reg [1:0]   next;
+  reg [2:0]   state;
+  reg [2:0]   next;
 
   reg [7:0]   N1_data_current;     //N1 saved data
   reg [7:0]   N1_data_next;        //N1 containing data
@@ -37,8 +39,8 @@ module counter_fsm(
   reg         direction_current;
   reg         direction_next;
 
-  reg [1:0]   debug_current;
-  reg [1:0]   debug_next;
+  reg [2:0]   debug_current;
+  reg [2:0]   debug_next;
 
   always @ (posedge clc_i, negedge rst_i) begin
     if(!rst_i) begin 
@@ -75,7 +77,7 @@ module counter_fsm(
           next = N1_SELECT;
       end
       N1_SELECT: begin
-        debug_next  = 2'd1;
+        debug_next  = 3'd1;
         dind_next   = din_i;
         if(v_i) begin 
           N1_data_next        = din_i;
@@ -83,19 +85,32 @@ module counter_fsm(
         end
       end 
       N2_SELECT: begin 
-        debug_next  = 2'd2;
+        debug_next  = 3'd2;
         dind_next   = din_i;
         if(v_i) begin 
           N2_data_next  = din_i;
-          next          = CALC;
+          next          = CALC_WAIT;
+        end
+      end
+      CALC_WAIT: begin 
+        debug_next = 3'd3;
+        dind_next  =  sawtooth_cntr_current + N1_data_current;
+        if(ST_i) begin
+          next = CALC;
+        end
+        else if(v_i) begin 
+          next = N1_SELECT;
         end
       end
       CALC: begin
-        debug_next  = 2'd3;
+        debug_next  = 3'd4;
         dind_next   = sawtooth_cntr_current + N1_data_current;
         if(v_i) begin 
           next = N1_SELECT;
           sawtooth_cntr_next = 8'd0;
+        end
+        else if(ST_i) begin 
+          next = CALC_WAIT;
         end
         else begin
           if(!direction_current) begin
@@ -109,6 +124,9 @@ module counter_fsm(
               direction_next = 1'b0;
           end
         end
+      end
+      default: begin
+        next = IDLE;
       end
     endcase
   end

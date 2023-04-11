@@ -1,5 +1,8 @@
 ../rtl/clk_div.v 
 ../rtl/counter_fsm.v
 ../rtl/sseg_dec.v
+../rtl/add3.v
+../rtl/bcd_decoder_8bit.v 
+../rtl/input_sync.v
 ../rtl/sawtooth_counter_top.v
 ../tb/tb_top.sv

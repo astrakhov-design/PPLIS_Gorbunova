@@ -14,3 +14,9 @@
 * Fixed clk_div module
 * Added testbench unit
 * Added simulation scripts
+
+## [ver. 0.0.4]
+
+* Added ST switch
+* Added Pinout module
+* Added BCD decoder module

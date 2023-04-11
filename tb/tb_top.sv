@@ -9,13 +9,14 @@ logic rstn = 1;
 logic div_clc;
 
 //debug wires 
-logic [1:0] state_display;
+logic [2:0] state_display;
 logic [7:0] N1_display;
 logic [7:0] N2_display;
 logic [7:0] sawtooth_cntr_display;
 logic [7:0] dind_current_display;
 
 logic v_button = 0;
+logic ST_button = 0;
 logic [7:0] din_in = 0;
 
 logic [6:0] sseg0;
@@ -28,6 +29,7 @@ sawtooth_counter_top DUT(
   .clk_i(clk),
   .rst_i(rstn),
   .v_i(v_button),
+  .ST_i(ST_button),
   .din_i(din_in),
   .Q_o(Q_led),
   .sseg0(sseg0),
@@ -53,13 +55,22 @@ initial begin
   set_data(20);
   wait_clc(2);
   set_data(40);
+  wait_clc(4);
+  set_st();
   repeat (50) @ (posedge div_clc);
+  set_st();
+  repeat (15) @ (posedge div_clc);
+  set_st();
+  repeat (15) @ (posedge div_clc);
   switch_button();
   wait_clc(2);
   set_data(15);
   wait_clc(2);
   set_data(76);
+  set_st();
   repeat (100) @ (posedge div_clc);
+  set_st();
+  repeat(20) @ (posedge div_clc);
   $stop;
 end
 
@@ -90,14 +101,23 @@ task set_data(bit [7:0] data);
   din_in = 8'd0;
 endtask
 
+task set_st();
+  ST_button = 1;
+  $display("Switch on START button");
+  repeat(1) @ (posedge div_clc);
+  ST_button = 0;
+endtask
+
 always @ (posedge div_clc) begin
   $display("------------------");
   $display("Time: %0t", $realtime);
-  $display("CURRENT STATE: %b", state_display);
+  $display("CURRENT STATE: %d", state_display);
   $display("N1 data: %d", N1_display);
   $display("N2 data: %d", N2_display);
   $display("Sawtooth counter: %d", sawtooth_cntr_display);
   $display("Dind output: %d", dind_current_display);
 end
+
+
 
 endmodule
