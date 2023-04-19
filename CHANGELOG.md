@@ -20,3 +20,7 @@
 * Added ST switch
 * Added Pinout module
 * Added BCD decoder module
+
+## [ver. 0.0.5]
+
+* Inverted input button signals

@@ -17,6 +17,11 @@ module sawtooth_counter_top(
 
 wire clc; //4 Hz clock
 
+//inverted input wires
+wire v_inv;         //inverted select input button
+wire ST_inv;        //inverted START counting button
+wire [7:0] din_inv; //inverted data for N1, N2
+
 wire [7:0]  dind;     //indication
 wire [7:0]  N1_data;  //N1 data
 wire [7:0]  N2_data;  //N2 data
@@ -31,6 +36,11 @@ wire [1:0] dind_hundreds;
 wire [7:0] din_sync;
 wire       ST_sync;
 wire       v_sync;
+
+//inverted signals declaration
+assign v_inv    = ~v_i;
+assign ST_inv   = ~ST_i;
+assign din_inv  = ~din_i; 
 
 //Sync din_i shifter data
 input_sync #(
@@ -48,7 +58,7 @@ input_sync #(
 ) st_sync_module(
   .clk_i(clc),
   .rstn(rst_i),
-  .input_wire(ST_i),
+  .input_wire(ST_inv),
   .output_wire(ST_sync)
 );
 
@@ -58,7 +68,7 @@ input_sync #(
 ) v_sync_module(
   .clk_i(clc),
   .rstn(rst_i),
-  .input_wire(v_i),
+  .input_wire(v_inv),
   .output_wire(v_sync)
 );
 
