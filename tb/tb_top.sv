@@ -15,15 +15,16 @@ logic [7:0] N2_display;
 logic [7:0] sawtooth_cntr_display;
 logic [7:0] dind_current_display;
 
-logic v_button = 0;
-logic ST_button = 0;
+logic v_button = 1;
+logic ST_button = 1;
 logic [7:0] din_in = 0;
 
 logic [6:0] sseg0;
 logic [6:0] sseg1;
+logic [6:0] sseg2;
 logic [6:0] sseg3;
 
-logic [19:0] Q_led;
+logic [17:0] Q_led;
 
 sawtooth_counter_top DUT(
   .clk_i(clk),
@@ -34,6 +35,7 @@ sawtooth_counter_top DUT(
   .Q_o(Q_led),
   .sseg0(sseg0),
   .sseg1(sseg1),
+  .sseg2(sseg2),
   .sseg3(sseg3)
 );
 
@@ -82,10 +84,10 @@ task reset(input int T);
 endtask
 
 task switch_button();
-  v_button = 1;
+  v_button = 0;
   $display("Switch Button");
   repeat(1) @ (posedge div_clc);
-  v_button = 0;
+  v_button = 1;
 endtask
 
 task wait_clc(input int T);
@@ -94,18 +96,18 @@ endtask
 
 task set_data(bit [7:0] data);
   din_in = data;
-  v_button = 1'b1;
+  v_button = 1'b0;
   repeat(1) @ (posedge div_clc);
   $display("Data: %d", din_in);
-  v_button = 1'b0;
+  v_button = 1'b1;
   din_in = 8'd0;
 endtask
 
 task set_st();
-  ST_button = 1;
+  ST_button = 0;
   $display("Switch on START button");
   repeat(1) @ (posedge div_clc);
-  ST_button = 0;
+  ST_button = 1;
 endtask
 
 always @ (posedge div_clc) begin

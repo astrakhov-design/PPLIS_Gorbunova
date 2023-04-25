@@ -12,9 +12,9 @@ module clk_div(
 
   always @ (posedge clk_i, negedge rst_i) begin
     if(!rst_i)
-      clk_cnt <= 28'h0;
+      clk_cnt <= 23'h0;
     else if(clk_cnt == 23'd6_250_001)
-      clk_cnt <= 28'h0;
+      clk_cnt <= 23'h0;
     else 
       clk_cnt <= clk_cnt + 1'b1;
   end

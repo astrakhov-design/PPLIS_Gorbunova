@@ -10,7 +10,10 @@ module counter_fsm(
   output  [7:0]   N1_out,             //output of N1 data
   output  [7:0]   N2_out,             //output of N2 data
   output  [7:0]   sawtooth_cntr_out,  //sawtooth counter output
-  output  [2:0]   debug_out          //output current state data (7 dight display)
+  output  [2:0]   debug_out,          //output current state data (7 dight display)
+  output          led_en_o,           //output LED enable indication
+  output          led_wait_o,           //output LED wait signal
+  output          direction_o         //output direction to LED
 
 );
 
@@ -48,7 +51,7 @@ module counter_fsm(
       N1_data_current       <=  8'd0;
       N2_data_current       <=  8'd1; //(N2 > N1 always!!!)
       dind_current          <=  8'd0;
-      debug_current         <=  8'd0;
+      debug_current         <=  3'd0;
       sawtooth_cntr_current <=  8'd0;
       direction_current     <=  1'b0;
     end
@@ -77,6 +80,7 @@ module counter_fsm(
           next = N1_SELECT;
       end
       N1_SELECT: begin
+        direction_next = 1'b0;
         debug_next  = 3'd1;
         dind_next   = din_i;
         if(v_i) begin 
@@ -85,6 +89,7 @@ module counter_fsm(
         end
       end 
       N2_SELECT: begin 
+        direction_next = 1'b0;
         debug_next  = 3'd2;
         dind_next   = din_i;
         if(v_i) begin 
@@ -136,5 +141,8 @@ module counter_fsm(
   assign  N2_out            = N2_data_current;
   assign  sawtooth_cntr_out = sawtooth_cntr_current;
   assign  debug_out         = debug_current;
+  assign  led_en_o          = (state == CALC);
+  assign  led_wait_o        = (state == CALC_WAIT);
+  assign  direction_o       = direction_current;
 
 endmodule

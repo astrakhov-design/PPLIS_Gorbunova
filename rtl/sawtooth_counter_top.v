@@ -20,7 +20,7 @@ wire clc; //4 Hz clock
 //inverted input wires
 wire v_inv;         //inverted select input button
 wire ST_inv;        //inverted START counting button
-wire [7:0] din_inv; //inverted data for N1, N2
+//wire [7:0] din_inv; //inverted data for N1, N2
 
 wire [7:0]  dind;     //indication
 wire [7:0]  N1_data;  //N1 data
@@ -37,10 +37,14 @@ wire [7:0] din_sync;
 wire       ST_sync;
 wire       v_sync;
 
+wire       led_en;
+wire       led_wait;
+wire       direction_wire;
+
 //inverted signals declaration
 assign v_inv    = ~v_i;
 assign ST_inv   = ~ST_i;
-assign din_inv  = ~din_i; 
+//assign din_inv  = ~din_i; 
 
 //Sync din_i shifter data
 input_sync #(
@@ -88,7 +92,10 @@ counter_fsm fsm(
   .N1_out(N1_data),
   .N2_out(N2_data),
   .sawtooth_cntr_out(sawtooth_counter),
-  .debug_out(debug_data)
+  .debug_out(debug_data),
+  .led_en_o(led_en),
+  .led_wait_o(led_wait),
+  .direction_o(direction_wire)
 );
 
 //BCD decode dind_out_wire
@@ -129,7 +136,9 @@ led_dec led_dec(
   .rst_i(rst_i),
   .N1_data_i(N1_data),
   .N2_data_i(N2_data),
-  .sawtooth_cntr_i(sawtooth_counter),
+  .led_en_i(led_en),
+  .led_wait_i(led_wait),
+  .direction_i(direction_wire),
   .led_out(Q_o)
 );
 
