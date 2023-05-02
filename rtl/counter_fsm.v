@@ -12,7 +12,7 @@ module counter_fsm(
   output  [7:0]   sawtooth_cntr_out,  //sawtooth counter output
   output  [2:0]   debug_out,          //output current state data (7 dight display)
   output          led_en_o,           //output LED enable indication
-  output          led_wait_o,           //output LED wait signal
+  output          led_wait_o,         //output LED wait signal
   output          direction_o         //output direction to LED
 
 );

@@ -18,6 +18,7 @@ reg [7:0] dimension_cntr;
 
 assign dimension = N2_data_i - N1_data_i;
 
+//18*N
 always @ * begin
   if(dimension <= 8'd18)
     dimension_div = 4'd1;
